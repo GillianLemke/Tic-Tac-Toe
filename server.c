@@ -112,39 +112,7 @@ int main(int argc, char *argv[]) {
       }
       case play: // play
       {
-		printf("getting id of user to play\n");
-		int user_id = temp->player_id;
-		int id_to_play = temp->id_to_play;
 		
-		printf("user %i has requested to play with user %i\n", user_id, id_to_play);
-		
-		struct PlayerInfo playerInfo = {id_to_play, "127.0.0.1"};
-		
-
-		
-		ssize_t numBytesSent = sendto(sock, (struct PlayerInfo*)&playerInfo, sizeof(playerInfo), 0, (struct sockaddr *) &clntAddr, sizeof(clntAddr));
-		
-		
-		struct RequestToPlay new_request = {user_id, users[user_id].clntAddr};
-		
-		ssize_t numBytesSent2 = sendto(sock, (struct RequestToPlay*)&new_request, sizeof(new_request), 0, 
-		                             (struct sockaddr *)&users[id_to_play].clntAddr, sizeof(users[id_to_play].clntAddr));
-		            
-		                             
-		int reply;
-		ssize_t numBytesRcvd = recvfrom(sock, (int*)&reply, MAXSTRINGLENGTH, 0,
-			(struct sockaddr *) &users[id_to_play].clntAddr, sizeof(&users[id_to_play].clntAddr));
-		
-		printf("user %i replyed %i", id_to_play, reply);
-		
-		if (reply == 1) {
-			users[id_to_play].in_game = true;
-			users[user_id].in_game = true;
-			ssize_t numBytesSent = sendto(sock, (int*)&reply, sizeof(reply), 0, 
-		                             (struct sockaddr *)&clntAddr, sizeof(clntAddr));
-		}
-		
-		printf("sent to other user\n");
         break;
 	  }
       case lookup: // lookup
