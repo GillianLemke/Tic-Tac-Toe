@@ -122,7 +122,9 @@ int main(int argc, char const *argv[]) {
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(PORT);
     
-    int inet = inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr);
+    char *ip_address = argv[2];
+        
+    int inet = inet_pton(AF_INET, ip_address, &serv_addr.sin_addr);
         
     // Convert IPv4 and IPv6 addresses from text to binary form
     if(inet<=0) {

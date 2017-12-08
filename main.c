@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
 			scanf("%d", &id);
 						
 			char run_command[100];
-			snprintf(run_command, 100, "./game_client_requester %i", id);
+			snprintf(run_command, 100, "./game_client_requester %i 127.0.0.1", id);
 			
             int status = system(run_command);
             break;
