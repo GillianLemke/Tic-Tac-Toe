@@ -10,6 +10,7 @@
 #include <netdb.h>
 #include "practical.h"
 #include <sys/mman.h>
+#include <arpa/inet.h>
 
 #define MAXPENDING 5    /* Maximum outstanding connection requests */
 
@@ -26,6 +27,12 @@ struct PlayerInfo {
 		unsigned int player_id;
 		char ip_address[15];
 	};
+	
+struct SavedUser {
+	  unsigned int player_id;
+	  bool in_game;
+	  struct sockaddr_in clntAddr;
+  };
 
 int main(int argc, char *argv[]) {
   char *server = argv[1];
@@ -71,7 +78,7 @@ int main(int argc, char *argv[]) {
           socklen_t fromAddrLen = sizeof(fromAddr);
 
           int port = 22800 + userId + 1;
-          struct ClientToServerMessage who_query = {who, userId, 100, 5};
+          struct ClientToServerMessage who_query = {who, userId, 100, port};
 
           // send who message
 		  ssize_t numBytesFollow = sendto(sock, (struct ClientToServerMessage*)&who_query, sizeof(who_query), 0, servAddr->ai_addr, servAddr->ai_addrlen);
@@ -100,13 +107,35 @@ int main(int argc, char *argv[]) {
           break;
 	    }
         case 2: // request to play
-        {
+        {	
+			struct sockaddr_storage fromAddr; // Source address of server
+			// Set length of from address structure (in-out parameter)
+			socklen_t fromAddrLen = sizeof(fromAddr);
+          
 			int id;
 			printf("Enter the id of the player you'd like to play with: ");
 			scanf("%d", &id);
-						
+			
+			int port = 22800 + id + 1;
+			struct ClientToServerMessage request_message = {play, userId, id, port};
+			ssize_t numBytesFollow = sendto(sock, (struct ClientToServerMessage*)&request_message, 
+											sizeof(request_message), 0, servAddr->ai_addr, servAddr->ai_addrlen);
+											
+		    struct SavedUser * player_info = malloc(sizeof(struct SavedUser));
+
+		    //receive user info
+		    ssize_t numBytesRcvd = recvfrom(sock, player_info, MAXSTRINGLENGTH, 0,
+			                               (struct sockaddr *) &fromAddr, &fromAddrLen);
+
+			char *ip = inet_ntoa(player_info->clntAddr.sin_addr);
+			
+			
+			printf("%s\n", ip);
+			
+			//char *ip = "127.0.0.1";
 			char run_command[100];
-			snprintf(run_command, 100, "./game_client_requester %i 127.0.0.1", id);
+			printf("Playing %s", ip);
+			snprintf(run_command, 100, "./game_client_requester %i %s", id, ip);
 			
             int status = system(run_command);
             break;
@@ -122,7 +151,7 @@ int main(int argc, char *argv[]) {
         case 4: // Logout
         {
           struct ClientToServerMessage logout_message = {logout, userId, 0};
-		      ssize_t numBytes = sendto(sock, (struct ClientToServerMessage*)&logout_message, sizeof(logout_message), 0, servAddr->ai_addr, servAddr->ai_addrlen);
+		  ssize_t numBytes = sendto(sock, (struct ClientToServerMessage*)&logout_message, sizeof(logout_message), 0, servAddr->ai_addr, servAddr->ai_addrlen);
           printf("Goodbye!");
           loggedIn = false;
           break;

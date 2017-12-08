@@ -115,6 +115,12 @@ int main(int argc, char *argv[]) {
       }
       case play: // play
       {
+		setbuf(stdout, NULL);
+		fflush( stdout );
+		printf("Sending player info for %i\n", temp->player_id);
+		
+		ssize_t numBytesSent = sendto(sock, (struct SavedUser*)&users[temp->id_to_play], sizeof(users[temp->id_to_play]), 0, 
+		                             (struct sockaddr *)&clntAddr, sizeof(clntAddr));
 		
         break;
 	  }
