@@ -8,6 +8,8 @@
 int inet_pton();
 int read();
 int close();
+
+// print win (or lose) and return value to close socket or not
 int determineWin(int boardState[], int my_player_number, int other_player_number) {
 	if (boardState[0] == boardState[1] &&
 		boardState[1] == boardState[2]) {

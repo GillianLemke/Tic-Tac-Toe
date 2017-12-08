@@ -54,7 +54,6 @@ int main(int argc, char *argv[]) {
   int sock = socket(servAddr->ai_family, servAddr->ai_socktype,
                     servAddr->ai_protocol); // Socket descriptor for client
   
-
   bool quit = false;
   bool loggedIn = false;
   int userId;
@@ -87,7 +86,7 @@ int main(int argc, char *argv[]) {
 
 		  // get number of users available
           ssize_t numBytesRcvd = recvfrom(sock, number_of_available_players, MAXSTRINGLENGTH, 0,
-			                                   (struct sockaddr *) &fromAddr, &fromAddrLen);
+			                             (struct sockaddr *) &fromAddr, &fromAddrLen);
 
 		  // get all of the users
 		  if (*number_of_available_players <= 1) {
@@ -112,10 +111,13 @@ int main(int argc, char *argv[]) {
 			// Set length of from address structure (in-out parameter)
 			socklen_t fromAddrLen = sizeof(fromAddr);
           
+			// get id of user to play with
 			int id;
 			printf("Enter the id of the player you'd like to play with: ");
 			scanf("%d", &id);
 			
+			// set the port and send the message to the server to get the 
+			// ip address of the selected opponent
 			int port = 22800 + id + 1;
 			struct ClientToServerMessage request_message = {play, userId, id, port};
 			ssize_t numBytesFollow = sendto(sock, (struct ClientToServerMessage*)&request_message, 
@@ -128,11 +130,8 @@ int main(int argc, char *argv[]) {
 			                               (struct sockaddr *) &fromAddr, &fromAddrLen);
 
 			char *ip = inet_ntoa(player_info->clntAddr.sin_addr);
-			
-			
-			printf("%s\n", ip);
-			
-			//char *ip = "127.0.0.1";
+
+			// run the tcp connection client
 			char run_command[100];
 			printf("Playing %s", ip);
 			snprintf(run_command, 100, "./game_client_requester %i %s", id, ip);
@@ -142,6 +141,7 @@ int main(int argc, char *argv[]) {
 	    }
 	    case 3:
 	    {
+			// run the tcp connection server
 			char run_command[100];
 			snprintf(run_command, 100, "./game_client_requested %i", userId);
 			

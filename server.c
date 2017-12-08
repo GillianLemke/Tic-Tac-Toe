@@ -84,16 +84,20 @@ int main(int argc, char *argv[]) {
     switch(temp->request_type) {
 	  case login: // Login
       {
+		// new user logged in
 		setbuf(stdout, NULL);
 		fflush( stdout );
 		printf("New user logging in.\n");
         struct SavedUser newUser;
 		printf("created new user\n");
+		
+		// add new user to saved/logged in users
         newUser.player_id = next_user;
 		newUser.in_game = false;
         newUser.clntAddr = clntAddr;
         users[next_user] = newUser;
 
+		// send id of user back
         ssize_t numBytesSentLogin = sendto(sock, (int*)&next_user, sizeof(next_user), 0,
           (struct sockaddr *) &clntAddr, sizeof(clntAddr));
 		next_user+=1;
@@ -103,9 +107,13 @@ int main(int argc, char *argv[]) {
       {
 		setbuf(stdout, NULL);
 		fflush( stdout );
+		
+		// sending number of players logged in
 		printf("sending number of people who are logged in to play\n");
 		ssize_t numBytesSent = sendto(sock, (int*)&next_user, sizeof(next_user), 0, 
 		                             (struct sockaddr *)&clntAddr, sizeof(clntAddr));
+		                             
+		// sending list of logged in users
 		printf("sending ids of users logged in\n");
 		for (int i = 0; i < next_user; i++) {
 			ssize_t numBytesSent = sendto(sock, (int*)&users[i].player_id, sizeof(next_user), 0,
@@ -119,14 +127,10 @@ int main(int argc, char *argv[]) {
 		fflush( stdout );
 		printf("Sending player info for %i\n", temp->player_id);
 		
+		// sending saved user struct containing the ip for the requested user
 		ssize_t numBytesSent = sendto(sock, (struct SavedUser*)&users[temp->id_to_play], sizeof(users[temp->id_to_play]), 0, 
 		                             (struct sockaddr *)&clntAddr, sizeof(clntAddr));
 		
-        break;
-	  }
-      case lookup: // lookup
-      {
-
         break;
 	  }
       case logout: // logout
