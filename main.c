@@ -14,16 +14,6 @@
 #define MAXPENDING 5    /* Maximum outstanding connection requests */
 
 void HandleTCPClient(int clntSocket);
-/**
- * Login
- * Who
- * send play request
- * receive play request
- * accept/decline play requests
- * send and receive play moves
- * send logout message to server
- * exit
- */
 
 struct ClientToServerMessage {
   enum {login, who, play, lookup, logout} request_type;     /* same size as an unsigned int */
@@ -80,7 +70,7 @@ int main(int argc, char *argv[]) {
           // Set length of from address structure (in-out parameter)
           socklen_t fromAddrLen = sizeof(fromAddr);
 
-          // TODO need tcp port
+          int port = 22800 + userId + 1;
           struct ClientToServerMessage who_query = {who, userId, 100, 5};
 
           // send who message
@@ -114,17 +104,9 @@ int main(int argc, char *argv[]) {
 			int id;
 			printf("Enter the id of the player you'd like to play with: ");
 			scanf("%d", &id);
-			
-			printf("%i", id);
-			
+						
 			char run_command[100];
 			snprintf(run_command, 100, "./game_client_requester %i", id);
-			//strcpy(run_command, "./game_client_requester ");
-			
-			//printf("command %s", run_command);
-			
-			//snprintf(run_command, 100, "%i", id);
-			printf("command with id %s", run_command);
 			
             int status = system(run_command);
             break;
@@ -133,11 +115,8 @@ int main(int argc, char *argv[]) {
 	    {
 			char run_command[100];
 			snprintf(run_command, 100, "./game_client_requested %i", userId);
-			//strcpy(run_command, "./game_client_requested ");
-			printf("command %s", run_command);
-			//snprintf(run_command, 100, "%i", userId);
-			//printf("command with id %s", run_command);
-            int status = system(run_command);
+			
+			int status = system(run_command);
 			break;
 		}
         case 4: // Logout

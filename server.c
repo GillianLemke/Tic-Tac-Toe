@@ -91,7 +91,6 @@ int main(int argc, char *argv[]) {
 		printf("created new user\n");
         newUser.player_id = next_user;
 		newUser.in_game = false;
-		// TODO: this should be a socket for the other clients to interact with
         newUser.clntAddr = clntAddr;
         users[next_user] = newUser;
 
@@ -123,7 +122,7 @@ int main(int argc, char *argv[]) {
       {
 
         break;
-	    }
+	  }
       case logout: // logout
       {
         int currentUser = temp->player_id;
