@@ -84,6 +84,8 @@ int main(int argc, char *argv[]) {
     switch(temp->request_type) {
 	  case login: // Login
       {
+		setbuf(stdout, NULL);
+		fflush( stdout );
 		printf("New user logging in.\n");
         struct SavedUser newUser;
 		printf("created new user\n");
@@ -100,6 +102,8 @@ int main(int argc, char *argv[]) {
       }
       case who: // who
       {
+		setbuf(stdout, NULL);
+		fflush( stdout );
 		printf("sending number of people who are logged in to play\n");
 		ssize_t numBytesSent = sendto(sock, (int*)&next_user, sizeof(next_user), 0, 
 		                             (struct sockaddr *)&clntAddr, sizeof(clntAddr));

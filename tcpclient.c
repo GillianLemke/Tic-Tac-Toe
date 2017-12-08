@@ -103,7 +103,7 @@ int determineWin(int boardState[], int my_player_number, int other_player_number
 int main(int argc, char const *argv[]) {
     struct sockaddr_in address;
     
-    int id = 10;
+    int id = *argv[1];
     int PORT = 22800 + id + 1;
     
     int sock = 0, valread;

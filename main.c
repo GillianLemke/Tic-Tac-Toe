@@ -14,7 +14,6 @@
 #define MAXPENDING 5    /* Maximum outstanding connection requests */
 
 void HandleTCPClient(int clntSocket);
-
 /**
  * Login
  * Who
@@ -112,14 +111,33 @@ int main(int argc, char *argv[]) {
 	    }
         case 2: // request to play
         {
-			//execl("game_client_requester", NULL);
-            int status = system("./game_client_requester");
+			int id;
+			printf("Enter the id of the player you'd like to play with: ");
+			scanf("%d", &id);
+			
+			printf("%i", id);
+			
+			char run_command[100];
+			snprintf(run_command, 100, "./game_client_requester %i", id);
+			//strcpy(run_command, "./game_client_requester ");
+			
+			//printf("command %s", run_command);
+			
+			//snprintf(run_command, 100, "%i", id);
+			printf("command with id %s", run_command);
+			
+            int status = system(run_command);
             break;
 	    }
 	    case 3:
 	    {
-			printf("case 3");
-			int status = system("./game_client_requested");
+			char run_command[100];
+			snprintf(run_command, 100, "./game_client_requested %i", userId);
+			//strcpy(run_command, "./game_client_requested ");
+			printf("command %s", run_command);
+			//snprintf(run_command, 100, "%i", userId);
+			//printf("command with id %s", run_command);
+            int status = system(run_command);
 			break;
 		}
         case 4: // Logout
